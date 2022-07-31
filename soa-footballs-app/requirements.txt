@@ -1,0 +1,11 @@
+fastapi[all]
+uvicorn
+alembic
+sqlalchemy
+dependency_injector
+containers
+pydantic
+python-dotenv
+psycopg2
+requests
+python-docx

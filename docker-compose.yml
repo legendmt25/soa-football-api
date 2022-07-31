@@ -1,0 +1,30 @@
+version: '3'
+services:
+  donations-app:
+    container_name: soa-football-query-app
+    build:
+      context: ./soa-football-query-app/
+      dockerfile: Dockerfile
+    volumes:
+      - ./soa-football-query-app:/soa-football-query-app/volume
+    env_file:
+      - ./soa-football-query-app/.env.local
+    ports:
+      - 8005:5000
+    depends_on:
+      - soa-football-query-app
+    restart: on-failure
+
+  soa-football-query-app-db:
+    container_name: soa-football-query-app-db
+    image: postgres
+    environment:
+      - POSTGRES_USER=soa-football-query-app
+      - POSTGRES_PASSWORD=soa-football-query-app
+      - POSTGRES_DB=soa-football-query-app
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+volumes:
+  postgres-data:
