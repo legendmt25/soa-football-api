@@ -1,15 +1,93 @@
 from fastapi import HTTPException
 import requests
 
-class FootballClient:
-    def __init__(self, endpoint: str):
-        self.endpoint = endpoint
-    
-    def findAllFixtures(self):
-        return
+from src.enums import OddsType
 
-    def findFixtureById(self, id: int):
-        return
+
+class FootballClient:
+    def __init__(self, endpoint: str, apiKey: str):
+        self.endpoint = endpoint
+        self.apiKey = apiKey
+        self.headers = { 'apikey': apiKey, 'content-type': 'application/json' }
+
+    def findAllMatches(self, season_id: int):
+        params=(
+            ('season_id', season_id),
+        )
+        res = requests.get(self.endpoint + 'matches', headers=self.headers, params=params)
+        return res.json()['data']
+
+    def findAllLiveMatches(self):
+        params = (
+            ('live', True),
+        )
+        res = requests.get(self.endpoint + 'matches', headers=self.headers, params=params)
+        return res.json()['data']
+
+    def findAllLiveMatchesBySeasonId(self, seasonId: int):
+        params = (
+            ('live', True),
+            ('season_id', seasonId),
+        )
+        res = requests.get(self.endpoint + 'matches', headers=self.headers, params=params)
+        return res.json()['data']
+    
+    def findMatchById(self, id: int, season_id: int):
+        params=(
+            ('season_id', season_id),
+        )
+        res = requests.get(self.endpoint + 'matches/' + str(id), headers=self.headers, params=params)
+        return res.json()['data']
+        
+    def findAllLeagues(self):
+        res = requests.get(self.endpoint + 'leagues', headers=self.headers)
+        return res.json()['data']
+
+    def findAllLeaguesByCountry(self, country_id: int):
+        params = (
+            ('country_id', country_id),
+        )
+        res = requests.get(self.endpoint + 'leagues', headers=self.headers, params=params)
+        return res.json()['data']
+
+    def findLeagueById(self, id: int):
+        res = requests.get(self.endpoint + 'leagues/' + str(id), headers=self.headers)
+        return res.json()['data']
+
+    def findAllSeasons(self, league_id: int):
+        params = (
+            ('league_id', league_id),
+        )
+        res = requests.get(self.endpoint + 'seasons', headers=self.headers, params=params)
+        return res.json()['data']
+
+    def findSeasonById(self, id: int, league_id: int):
+        params = (
+            ('league_id', league_id),
+        )
+        res = requests.get(self.endpoint + 'seasons/' + str(id), headers=self.headers, params=params)
+        return res.json()['data']
+
+    def findAllVenuse(self, country_id: int):
+        params = (
+            ('country_id', country_id),
+        )
+        res = requests.get(self.endpoint + 'venues', headers=self.headers, params=params)
+        return res.json()['data']
+
+    def findVenueById(self, id: int, country_id: int):
+        params = (
+            ('country_id', country_id),
+        )
+        res = requests.get(self.endpoint + 'seasons/' + str(id), headers=self.headers, params=params)
+        return res.json()['data']
+
+    def findOddsByMatch(self, match_id: int, type: OddsType):
+        params = (
+            ('type', type)
+        )
+        res = requests.get(self.endpoint + 'odds/' + str(match_id), headers=self.headers, params=params)
+        return res.json()['data']
 
 class UserClient:
     def __init__(self, endpoint: str):

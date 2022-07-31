@@ -1,48 +1,56 @@
 from datetime import date
 from typing import Optional
-from pydantic import BaseModel
 
-class Fixture:
-    id: int
-    timezone: str
-    date: date
-    timestamp: int
-    status: any
-    
-
-class Result:
-    home: Optional[int]
-    away: Optional[int]
-
-class Score:
-    halftime: Result
-    fulltime: Result
-    extratime: Result
-    penaly: Result
+from src.enums import MatchStatus
 
 class Team:
-    id: int
+    team_id: int
     name: str
+    short_code: str
 
-class Teams:
-    home: Team
-    away: Team
+class Stats:
+    home_score: int
+    away_score: int
+    ht_score: Optional[str]
+    ft_score: Optional[str]
+    et_score: Optional[str]
+    ps_score: Optional[str]
+    
+
+class Match:
+    match_id: int
+    status_code: MatchStatus
+    status: str
+    match_start: date
+    league_id: int
+    season_id: int
+    home_team: Team
+    away_team: Team
+    stats: Stats
 
 class League:
-    id: int
+    league_id: int
+    country_id: int
     name: str
-    country: str
-    season: int
-    
-class FixtureBase(BaseModel):
-    pass
 
-class Fixtures(FixtureBase):
-    id: int
-    fixture: Fixture
-    score: Score
-    league: League
-    teams: Teams
-    
+class Season:
+    season_id: int
+    name: str
+    is_current: int
+    country_id: int
+    league_id: int
+    start_date: date
+    end_date: date
 
+class Venue:
+    venue_id: int
+    country_id: int
+    capacity: int
+    city: str
+    name: str
 
+class Country:
+    country_id: int
+    name: str
+    country_code: str
+    continent: str
