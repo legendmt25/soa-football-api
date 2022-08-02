@@ -54,3 +54,12 @@ class Country:
     name: str
     country_code: str
     continent: str
+
+class Odd:
+    season_id: int
+    name: str
+    is_current: int
+    country_id: int
+    league_id: int
+    start_date: date
+    end_date: date

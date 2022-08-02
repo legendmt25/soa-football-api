@@ -18,8 +18,8 @@ class FootballService:
             return self.footballClient.findAllLiveMatches()
         return []
 
-    def findMatchById(self, id: int, seasonId: int) -> models.Match:
-        return self.footballClient.findMatchById(id, seasonId)
+    def findMatchById(self, id: int) -> models.Match:
+        return self.footballClient.findMatchById(id)
 
     def findAllLeagues(self, countryId: Optional[int] = None) -> Iterable[models.League]:
         if(countryId == None):
@@ -35,6 +35,6 @@ class FootballService:
     def findSeasonById(self, id: int, leagueId: int) -> models.Season:
         return self.footballClient.findSeasonById(id, leagueId)
 
-    def findOddsByMatchId(self, matchId: int, type: OddsType):
-        return self.footballClient.findOddsByMatch(matchId, type)
+    def findOddsByMatchId(self, matchId: int, oddsType: OddsType) -> models.Odd:
+        return self.footballClient.findOddsByMatch(matchId, oddsType)
 

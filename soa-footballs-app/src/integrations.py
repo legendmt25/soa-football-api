@@ -32,11 +32,8 @@ class FootballClient:
         res = requests.get(self.endpoint + 'matches', headers=self.headers, params=params)
         return res.json()['data']
     
-    def findMatchById(self, id: int, season_id: int):
-        params=(
-            ('season_id', season_id),
-        )
-        res = requests.get(self.endpoint + 'matches/' + str(id), headers=self.headers, params=params)
+    def findMatchById(self, id: int):
+        res = requests.get(self.endpoint + 'matches/' + str(id), headers=self.headers)
         return res.json()['data']
         
     def findAllLeagues(self):
@@ -82,9 +79,9 @@ class FootballClient:
         res = requests.get(self.endpoint + 'seasons/' + str(id), headers=self.headers, params=params)
         return res.json()['data']
 
-    def findOddsByMatch(self, match_id: int, type: OddsType):
+    def findOddsByMatch(self, match_id: int, oddsType: OddsType):
         params = (
-            ('type', type)
+            ('type', oddsType.value),
         )
         res = requests.get(self.endpoint + 'odds/' + str(match_id), headers=self.headers, params=params)
         return res.json()['data']

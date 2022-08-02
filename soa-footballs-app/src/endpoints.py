@@ -34,7 +34,7 @@ def matches(
     authorize(userClient, Authorization, [])
     return footballService.findAllMatches(season_id, live)
 
-@router.get('/api/v1/matches/:id')
+@router.get('/api/v1/matches/{id}')
 @inject
 def match(
     id: int,
@@ -57,7 +57,7 @@ def leagues(
     authorize(userClient, Authorization, [])
     return footballService.findAllLeagues(country_id)
 
-@router.get('/api/v1/leagues/:id')
+@router.get('/api/v1/leagues/{id}')
 @inject
 def league(
     id: int,
@@ -79,14 +79,14 @@ def seasons(
     authorize(userClient, Authorization, [])
     return footballService.findAllSeasons(league_id)
 
-@router.get('/api/v1/odds/:match_id')
+@router.get('/api/v1/odds/{match_id}')
 @inject
 def odds(
     match_id: int,
-    type: OddsType,
+    oddsType: OddsType,
     userClient: UserClient = Depends(Provide[Container.userClient]),
     footballService: FootballService = Depends(Provide[Container.footballService]),
     Authorization: Optional[str] = Header(None)
 ):
     authorize(userClient, Authorization, [])
-    return footballService.findOddsByMatchId(match_id, type)
+    return footballService.findOddsByMatchId(match_id, oddsType)
