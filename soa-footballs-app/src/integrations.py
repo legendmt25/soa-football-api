@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import HTTPException
 import requests
 
@@ -105,3 +106,10 @@ class UserClient:
             raise HTTPException(408, "Cannot reach " + self.endpoint)
         user = response.json()
         return user['username']
+
+    def authenticate(self, Authorization: Optional[str], roles: list):
+        if(len(roles) != 0 and Authorization == None):
+            raise HTTPException(401, "You need to authenticate first")
+        for role in roles:
+            if(not self.userContainsRole(Authorization, role)):
+                raise HTTPException(403, "Forbidden access to this endpoint")

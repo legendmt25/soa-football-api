@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, Header, status
+from fastapi import APIRouter, Depends, Header
 from dependency_injector.wiring import inject, Provide
 from src.enums import OddsType
 
@@ -8,21 +8,9 @@ from src.services import FootballService
 from src.integrations import UserClient
 
 
-router = APIRouter()
+router = APIRouter('/api')
 
-
-def authorize(userClient: UserClient, authorization: Optional[str], roles: list[str]):
-    if(len(roles) != 0 and authorization == None):
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED,
-                            "You need to authenticate first")
-
-    for role in roles:
-        if not userClient.userContainsRole(authorization, role):
-            raise HTTPException(status.HTTP_403_FORBIDDEN,
-                                "Forbidden access to this endpoint")
-    return True
-
-@router.get('/api/v1/matches')
+@router.get('/matches')
 @inject
 def matches(
     season_id: Optional[int] = None,
@@ -31,10 +19,10 @@ def matches(
     footballService: FootballService = Depends(Provide[Container.footballService]),
     Authorization: Optional[str] = Header(None)
 ):
-    authorize(userClient, Authorization, [])
+    userClient.authorize(Authorization, [])
     return footballService.findAllMatches(season_id, live)
 
-@router.get('/api/v1/matches/{id}')
+@router.get('/matches/{id}')
 @inject
 def match(
     id: int,
@@ -42,11 +30,11 @@ def match(
     footballService: FootballService = Depends(Provide[Container.footballService]),
     Authorization: Optional[str] = Header(None)
 ):
-    authorize(userClient, Authorization, [])
+    userClient.authorize(Authorization, [])
     return footballService.findMatchById(id)
 
 
-@router.get('/api/v1/leagues')
+@router.get('/leagues')
 @inject
 def leagues(
     country_id: Optional[int] = None,
@@ -54,10 +42,10 @@ def leagues(
     footballService: FootballService = Depends(Provide[Container.footballService]),
     Authorization: Optional[str] = Header(None)
 ):
-    authorize(userClient, Authorization, [])
+    userClient.authorize(Authorization, [])
     return footballService.findAllLeagues(country_id)
 
-@router.get('/api/v1/leagues/{id}')
+@router.get('/leagues/{id}')
 @inject
 def league(
     id: int,
@@ -65,10 +53,10 @@ def league(
     footballService: FootballService = Depends(Provide[Container.footballService]),
     Authorization: Optional[str] = Header(None)
 ):
-    authorize(userClient, Authorization, [])
+    userClient.authorize(Authorization, [])
     return footballService.findMatchById(id)
 
-@router.get('/api/v1/seasons')
+@router.get('/seasons')
 @inject
 def seasons(
     league_id: int,
@@ -76,10 +64,10 @@ def seasons(
     footballService: FootballService = Depends(Provide[Container.footballService]),
     Authorization: Optional[str] = Header(None)
 ):
-    authorize(userClient, Authorization, [])
+    userClient.authorize(Authorization, [])
     return footballService.findAllSeasons(league_id)
 
-@router.get('/api/v1/odds/{match_id}')
+@router.get('/odds/{match_id}')
 @inject
 def odds(
     match_id: int,
@@ -88,5 +76,5 @@ def odds(
     footballService: FootballService = Depends(Provide[Container.footballService]),
     Authorization: Optional[str] = Header(None)
 ):
-    authorize(userClient, Authorization, [])
+    userClient.authorize(Authorization, [])
     return footballService.findOddsByMatchId(match_id, oddsType)

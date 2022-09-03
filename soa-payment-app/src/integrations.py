@@ -1,30 +1,8 @@
-from http.client import responses
 from typing import Optional
 from fastapi import HTTPException
 import requests
 
-
-class PaymentClient:
-    def __init__(self, endpoint: str) -> None:
-        self.endpoint = endpoint
-    
-    def pay(self, price: float, userId: int):
-        try:
-            response = requests.post(self.endpoint + 'api/pay', data={
-                'price': price,
-                'userId': userId
-            })
-            if not response.ok:
-                raise HTTPException(408, 'Server error')
-        except:
-            raise HTTPException(408, "Cannot reach " + self.endpoint)
-        return response.json()
-
-class FootballClient:
-    def __init__(self, endpoint: str):
-        self.endpoint = endpoint
-
-class UserClient:
+class UserService:
     def __init__(self, endpoint: str):
         self.endpoint = endpoint
     
@@ -45,7 +23,7 @@ class UserClient:
         return user['username']
 
     def authenticate(self, Authorization: Optional[str], roles: list):
-        if(len(roles) != 0 and Authorization == None):
+        if(Authorization == None):
             raise HTTPException(401, "You need to authenticate first")
         for role in roles:
             if(not self.userContainsRole(Authorization, role)):
