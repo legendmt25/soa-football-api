@@ -12,10 +12,9 @@ class Container(containers.DeclarativeContainer):
     config.FOOTBALL_ENDPOINT.from_env("FOOTBALL_ENDPOINT")
     config.PORT.from_env("PORT", as_=int, default=5000)
     config.FOOTBALL_API_KEY.from_env("FOOTBALL_API_KEY")
-    config.LEAGUES.from_env('LEAGUES_ID')
 
     wiring_config = containers.WiringConfiguration(modules=["src.endpoints"])    
 
     userClient = providers.Factory(UserClient, config.USER_ENDPOINT)
     footballClient = providers.Factory(FootballClient, config.FOOTBALL_ENDPOINT, config.FOOTBALL_API_KEY)
-    footballService = providers.Factory(FootballService, footballClient, config.LEAGUES)
+    footballService = providers.Factory(FootballService, footballClient)

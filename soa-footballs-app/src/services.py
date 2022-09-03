@@ -5,9 +5,8 @@ from src.enums import OddsType
 import src.models as models
 
 class FootballService:
-    def __init__(self, footballClient: FootballClient, leagues_id: str):
+    def __init__(self, footballClient: FootballClient):
         self.footballClient = footballClient
-        self.leagues_id = [int(league_id) for league_id in leagues_id.split(',')]
 
     def findAllMatches(self, seasonId: Optional[int], live: Optional[int]) -> Iterable[models.Match]:
         if(seasonId != None and live != None):

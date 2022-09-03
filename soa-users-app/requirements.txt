@@ -1,0 +1,8 @@
+fastapi[all]
+uvicorn
+alembic
+pydantic
+python-dotenv
+python-keycloak
+containers
+dependency_injector
