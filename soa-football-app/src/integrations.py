@@ -107,7 +107,7 @@ class UserClient:
         user = response.json()
         return user['username']
 
-    def authenticate(self, Authorization: Optional[str], roles: list):
+    def authorize(self, Authorization: Optional[str], roles: list):
         if(len(roles) != 0 and Authorization == None):
             raise HTTPException(401, "You need to authenticate first")
         for role in roles:

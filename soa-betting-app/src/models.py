@@ -1,17 +1,34 @@
 from datetime import date
 from pydantic import BaseModel
 
-class BetBase(BaseModel):
+class BetMatchBase(BaseModel): 
+    matchId: int
+    playType: str
+
+
+class BetMatchCreate(BetMatchBase):
     pass
 
-class BetCreate(BetBase):
-    userId: str
-
-class Bet(BetBase):
+class BetMatch(BetMatchBase):
     id: int
-    userId: str
-    createdAt: date
-    price: float
 
     class Config:
         orm_mode = True
+
+
+
+class BetBase(BaseModel):
+    price: float
+
+class BetCreate(BetBase):
+    matches: list[BetMatchCreate]
+
+class Bet(BetBase):
+    id: int
+    userId: int
+    matches: list[BetMatch]
+    createdAt: date
+        
+    class Config:
+        orm_mode = True
+

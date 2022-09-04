@@ -7,43 +7,36 @@ from src.containers import Container
 from src.models import TransactionCreate
 from src.enums import TransactionStatus
 from src.services import TransactionService
-from src.integrations import UserService
+from src.integrations import UserClient
 
 
-router = APIRouter("/api")
+router = APIRouter(prefix='/api')
 
-@router.post("/pay")
+@router.post('/pay')
 @inject
 def pay(
     body: TransactionCreate,
     Authorization: Optional[str] = Header(None),
-    userService: UserService = Depends(Provide[Container.userService]),
+    userClient: UserClient = Depends(Provide[Container.userClient]),
     transactionService: TransactionService = Depends(Provide[Container.transactionService])
 ):
-    userService.authenticate(Authorization, "Client", "Employee", "Admin")    
-    status = 0
-    userId = userService.getUserId(Authorization)
-    try:
-        if(body.txBase != None):
-            status = transactionService.pay(
-                TransactionCreate(
-                    price=body.txBase.price, 
-                    userId=userId
-                )
-            )
-    except:
-        raise HTTPException(status.HTTP_409_CONFLICT, "Cound't create transactions")
-    finally:
-        return status
+    userClient.authorize(Authorization, ["Client", "Employee", "Admin"])    
+    userId = userClient.getUserId(Authorization)
+    return transactionService.pay(
+        TransactionCreate(
+            price=body.price, 
+            userId=userId
+        )
+    )
         
-@router.get("/transactions")
+@router.get('/transactions')
 @inject
 def transactions(
     Authorization: Optional[str] = Header(None),
-    userService: UserService = Depends(Provide[Container.userService]),
+    userClient: UserClient = Depends(Provide[Container.userClient]),
     transactionService: TransactionService = Depends(Provide[Container.transactionService])
 ):
-    userService.authenticate(Authorization, "Employee", "Admin")
+    userClient.authorize(Authorization, ["Employee", "Admin"])
     return transactionService.findAll()
 
 @router.post("/transactions-by-creation")
@@ -51,10 +44,10 @@ def transactions(
 def transactionsByCreatedAt(
     date: date,
     Authorization: Optional[str] = Header(None),
-    userService: UserService = Depends(Provide[Container.userService]),
+    userClient: UserClient = Depends(Provide[Container.userClient]),
     transactionService: TransactionService = Depends(Provide[Container.transactionService])
 ):
-    userService.authenticate(Authorization, "Employee", "Admin")
+    userClient.authorize(Authorization, ["Employee", "Admin"])
     return transactionService.findAllByCreatedAt(date)
 
 @router.post("/transactions-by-userid")
@@ -62,10 +55,10 @@ def transactionsByCreatedAt(
 def transactionsByUserId(
     userId: int,
     Authorization: Optional[str] = Header(None),
-    userService: UserService = Depends(Provide[Container.userService]),
+    userClient: UserClient = Depends(Provide[Container.userClient]),
     transactionService: TransactionService = Depends(Provide[Container.transactionService])
 ):
-    userService.authenticate(Authorization, "Employee", "Admin")
+    userClient.authorize(Authorization, ["Employee", "Admin"])
     return transactionService.findAllByUserId(userId)
 
 @router.get("/transaction/{id}")
@@ -73,10 +66,10 @@ def transactionsByUserId(
 def transaction(
     id: int,
     Authorization: Optional[str] = Header(None),
-    userService: UserService = Depends(Provide[Container.userService]),
+    userClient: UserClient = Depends(Provide[Container.userClient]),
     transactionService: TransactionService = Depends(Provide[Container.transactionService])
 ):
-    userService.authenticate(Authorization, "Employee", "Admin")
+    userClient.authorize(Authorization, ["Employee", "Admin"])
     return transactionService.findById(id)
 
 @router.post("/transaction/create")
@@ -84,10 +77,10 @@ def transaction(
 def create(
     transaction: TransactionCreate,
     Authorization: Optional[str] = Header(None),
-    userService: UserService = Depends(Provide[Container.userService]),
+    userClient: UserClient = Depends(Provide[Container.userClient]),
     transactionService: TransactionService = Depends(Provide[Container.transactionService])
 ):
-    userService.authenticate(Authorization, "Employee", "Admin")
+    userClient.authorize(Authorization, ["Employee", "Admin"])
     return transactionService.create(transaction)
     
 @router.post("/transaction/{id}/set-status")
@@ -96,10 +89,10 @@ def setStatus(
     id: int, 
     status: TransactionStatus,
     Authorization: Optional[str] = Header(None),
-    userService: UserService = Depends(Provide[Container.userService]),
+    userClient: UserClient = Depends(Provide[Container.userClient]),
     transactionService: TransactionService = Depends(Provide[Container.transactionService])
 ):
-    userService.authenticate(Authorization, "Admin")
+    userClient.authorize(Authorization, ["Admin"])
     return transactionService.setTransactionStatus(id, status)
 
 @router.get("/daily-report")
@@ -107,8 +100,8 @@ def setStatus(
 def getDailyReport(
     date: date,
     Authorization: Optional[str] = Header(None),
-    userService: UserService = Depends(Provide[Container.userService]),
+    userClient: UserClient = Depends(Provide[Container.userClient]),
     transactionService: TransactionService = Depends(Provide[Container.transactionService])
 ):
-    userService.authenticate(Authorization, "Admin")    
+    userClient.authorize(Authorization, ["Admin"])    
     return transactionService.getDailyReportForDate(date)

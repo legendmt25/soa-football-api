@@ -1,3 +1,4 @@
+from sys import prefix
 from typing import Optional
 from fastapi import APIRouter, Depends, Header
 from dependency_injector.wiring import inject, Provide
@@ -8,7 +9,7 @@ from src.services import FootballService
 from src.integrations import UserClient
 
 
-router = APIRouter('/api')
+router = APIRouter(prefix='/api')
 
 @router.get('/matches')
 @inject
@@ -31,6 +32,7 @@ def match(
     Authorization: Optional[str] = Header(None)
 ):
     userClient.authorize(Authorization, [])
+    print(id)
     return footballService.findMatchById(id)
 
 

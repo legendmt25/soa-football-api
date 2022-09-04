@@ -2,7 +2,7 @@ from dependency_injector import containers, providers
 from dotenv import load_dotenv
 
 from src.database import Database
-from src.integrations import UserService
+from src.integrations import UserClient
 from src.repositories import TransactionRepository
 from src.services import TransactionService
 
@@ -20,4 +20,4 @@ class Container(containers.DeclarativeContainer):
 
     transactionRepository = providers.Factory(TransactionRepository, db.provided.session)
     transactionService = providers.Factory(TransactionService, transactionRepository)
-    userService = providers.Factory(UserService, config.USER_ENDPOINT)
+    userClient = providers.Factory(UserClient, config.USER_ENDPOINT)

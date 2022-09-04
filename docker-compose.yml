@@ -1,25 +1,92 @@
 version: '3'
 services:
-  # soa-users-app:
-  #   container_name: soa-users-app
-  #   build:
-  #     context: ./soa-users-app/
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./soa-users-app:/soa-users-app/volume
-  #   env_file:
-  #     - ./soa-users-app/.env.local
-  #   ports:
-  #     - 8005:5000
-  #   depends_on:
-  #     - keycloak
-  #   restart: on-failure
+  soa-users-app:
+    container_name: soa-users-app
+    build:
+      context: ./soa-users-app/
+      dockerfile: Dockerfile
+    volumes:
+      - ./soa-users-app:/soa-users-app/volume
+    env_file:
+      - ./soa-users-app/.env.local
+    ports:
+      - 8000:5000
+    depends_on:
+      - keycloak
+    restart: on-failure
 
-  postgres:
+  soa-football-app:
+    container_name: soa-football-app
+    build:
+      context: ./soa-football-app/
+      dockerfile: Dockerfile
+    volumes:
+      - ./soa-football-app:/soa-football-app/volume
+    env_file:
+      - ./soa-football-app/.env.local
+    ports:
+      - 8001:5000
+    restart: on-failure
+
+  soa-payment-app:
+    container_name: soa-payment-app
+    build:
+      context: ./soa-payment-app/
+      dockerfile: Dockerfile
+    volumes:
+      - ./soa-payment-app:/soa-payment-app/volume
+    env_file:
+      - ./soa-payment-app/.env.local
+    ports:
+      - 8002:5000
+    depends_on:
+      - soa-payment-app-db
+    restart: on-failure
+    
+  soa-betting-app:
+    container_name: soa-betting-app
+    build:
+      context: ./soa-betting-app/
+      dockerfile: Dockerfile
+    volumes:
+      - ./soa-betting-app:/soa-betting-app/volume
+    env_file:
+      - ./soa-betting-app/.env.local
+    ports:
+      - 8003:5000
+    depends_on:
+      - soa-betting-app-db
+    restart: on-failure
+
+  soa-betting-app-db:
+    image: postgres
+    container_name: soa-betting-app-db
+    volumes:
+      - betting-app-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: betting-app
+      POSTGRES_USER: betting-app
+      POSTGRES_PASSWORD: betting-app
+    ports:
+      - 5432:5432
+
+  soa-payment-app-db:
+    image: postgres
+    container_name: soa-payment-app-db
+    volumes:
+      - payment-app-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: payment-app
+      POSTGRES_USER: payment-app
+      POSTGRES_PASSWORD: payment-app
+    ports:
+      - 5433:5432
+
+  keycloak-db:
     image: postgres
     container_name: keycloak_db
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - keycloak-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
@@ -38,19 +105,10 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - postgres
+      - keycloak-db
     command: start-dev
-
-  # soa-football-query-app-db:
-  #   container_name: soa-football-query-app-db
-  #   image: postgres
-  #   environment:
-  #     - POSTGRES_USER=soa-football-query-app
-  #     - POSTGRES_PASSWORD=soa-football-query-app
-  #     - POSTGRES_DB=soa-football-query-app
-  #   ports:
-  #     - 5432:5432
-  #   volumes:
-  #     - postgres-data:/var/lib/postgresql/data
+    
 volumes:
-  postgres-data:
+  keycloak-data:
+  betting-app-data:
+  payment-app-data:

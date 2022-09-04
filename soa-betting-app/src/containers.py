@@ -1,8 +1,8 @@
 from dependency_injector import containers, providers
 from dotenv import load_dotenv
-from repositories import BettingRepository
-from services import BettingService
 
+from src.repositories import BettingRepository
+from src.services import BettingService
 from src.integrations import PaymentClient, UserClient, FootballClient
 from src.database import Database
 
@@ -23,5 +23,5 @@ class Container(containers.DeclarativeContainer):
     footballClient = providers.Factory(FootballClient, config.FOOTBALL_ENDPOINT)
     userClient = providers.Factory(UserClient, config.USER_ENDPOINT)
     
-    bettingRepository = providers.Factory(BettingRepository, db)
+    bettingRepository = providers.Factory(BettingRepository, db.provided.session)
     bettingService = providers.Factory(BettingService, bettingRepository, footballClient)
